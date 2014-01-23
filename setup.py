@@ -1,7 +1,8 @@
+import sys
 from distutils.core import setup
 
+
 for cmd in ('egg_info', 'develop'):
-    import sys
     if cmd in sys.argv:
         from setuptools import setup
 
