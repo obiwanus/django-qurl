@@ -1,4 +1,8 @@
+import os
 from django.template import Template, Context
+
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
 
 
 def test_qurl_append():
