@@ -6,3 +6,4 @@ INSTALLED_APPS = (
 
 TEMPLATE_DEBUG = True
 SECRET_KEY = "super secret key"
+ROOT_URLCONF = 'tests.urls'
