@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import os
 import pytest
-from django.template import Template, Context
+from django.template import Template, Context, TemplateSyntaxError
 
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
@@ -45,10 +45,33 @@ def test_quotes_in_params():
     assert out == 'http://example.com/?a=1&b=vodka+vodka'
 
 
-@pytest.mark.xfail
-def test_reverse():
+def test_multiple_separators():
+    with pytest.raises(TemplateSyntaxError):
+        Template(
+            "{% load qurl %}"
+            "{% qurl '/url/' a=1 | b=2 | c=3 %}"
+        )
+
+
+def test_reverse_noargs():
+    out = Template(
+        "{% load qurl %}"
+        "{% qurl 'testurl_noargs' | a=3 b=5 c-- %}"
+    ).render(Context())
+    assert out == '/testurl-noargs/?a=3&b=5'
+
+
+def test_reverse_args():
     out = Template(
         "{% load qurl %}"
         "{% qurl 'testurl' 12 | a=3 b=5 %}"
     ).render(Context())
     assert out == '/testurl/12/?a=3&b=5'
+
+
+def test_reverse_kwargs():
+    out = Template(
+        "{% load qurl %}"
+        "{% qurl 'testurl_kwargs' param=12 | a+=3 b=5 %}"
+    ).render(Context())
+    assert out == '/testurl-kw/12/?a=3&b=5'

@@ -6,6 +6,7 @@ def testview(request, *args, **kwargs):
 
 
 urlpatterns = patterns('',
+    url(r'^testurl-noargs/$', testview, name='testurl_noargs'),
     url(r'^testurl/([^/]+)/$', testview, name='testurl'),
     url(r'^testurl-kw/(?P<param>[^/]+)/$', testview, name='testurl_kwargs'),
 )

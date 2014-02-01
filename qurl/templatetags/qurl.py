@@ -1,5 +1,6 @@
 import re
 import django
+from django.template.defaulttags import URLNode
 
 from django.utils.encoding import smart_str
 from django.template import Library, Node, TemplateSyntaxError
@@ -16,12 +17,40 @@ else:
 register = Library()
 
 
+def _get_url_node(parser, bits):
+    """
+    Parses the expression as if it was a normal url tag. Was copied
+    from the original function django.template.defaulttags.url,
+    but unnecessary pieces were removed.
+    """
+    viewname = parser.compile_filter(bits[1])
+    args = []
+    kwargs = {}
+    bits = bits[2:]
+
+    if len(bits):
+        kwarg_re = re.compile(r"(?:(\w+)=)?(.+)")
+        for bit in bits:
+            match = kwarg_re.match(bit)
+            if not match:
+                raise TemplateSyntaxError("Malformed arguments to url tag")
+            name, value = match.groups()
+            if name:
+                kwargs[name] = parser.compile_filter(value)
+            else:
+                args.append(parser.compile_filter(value))
+
+    return URLNode(viewname, args, kwargs, asvar=None)
+
+
 @register.tag
 def qurl(parser, token):
     """
     Append, remove or replace query string parameters (preserve order)
 
         {% qurl url [param]* [as <var_name>] %}
+
+        {% qurl 'reverse_name' [reverse_params] | [param]* [as <var_name>] %}
 
     param:
             name=value: replace all values of name by one value
@@ -42,10 +71,20 @@ def qurl(parser, token):
         raise TemplateSyntaxError(
             '"{0}" takes at least one argument (url)'.format(bits[0]))
 
-    url = parser.compile_filter(bits[1])
+    if bits.count('|') > 1:
+        raise TemplateSyntaxError(
+            '"{0}" may take only one separator'.format(bits[0]))
+
+    if bits.count('|'):
+        # A url expression was passed, needs reversing
+        url = _get_url_node(parser, bits[:bits.index('|')])
+        bits = bits[bits.index('|')+1:]
+    else:
+        # A url was passed directly
+        url = parser.compile_filter(bits[1])
+        bits = bits[2:]
 
     asvar = None
-    bits = bits[2:]
     if len(bits) >= 2 and bits[-2] == 'as':
         asvar = bits[-1]
         bits = bits[:-2]
@@ -72,7 +111,10 @@ class QURLNode(Node):
         self.asvar = asvar
 
     def render(self, context):
-        url = self.url.resolve(context)
+        if isinstance(self.url, URLNode):
+            url = self.url.render(context)
+        else:
+            url = self.url.resolve(context)
         urlp = list(urlparse(url))
         qp = parse_qsl(urlp[4])
         for name, op, value in self.qs:
