@@ -20,11 +20,11 @@ def test_append():
 def test_set():
     out = Template(
         "{% load qurl %}"
-        "{% qurl '/testurl/?a=1&b=2' b=1 %}"
+        "{% qurl '/testurl/?a=green&b=2' b=1 %}"
     ).render(Context())
     assert 'b=2' not in out
     assert 'b=1' in out
-    assert 'a=1' in out
+    assert 'a=green' in out
 
 
 def test_as_context_var():
