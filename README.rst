@@ -25,7 +25,7 @@ Append, remove or replace query string parameters from an url (preserve order)
 
     Parameters:
             name=value: replace all values of name by one value
-            name=None: remove all values of name
+            name--: remove all values of name
             name+=value: append a new value for name
             name-=value: remove the value of name with the value
 

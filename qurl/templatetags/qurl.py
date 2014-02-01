@@ -52,7 +52,7 @@ def qurl(parser, token, reverse=False):
 
     qs = []
     if len(bits):
-        kwarg_re = re.compile(r"(\w+)(\-=|\+=|=)(.*)")
+        kwarg_re = re.compile(r"(\w+)(\-=|\+=|=|\-\-)(.*)")
         for bit in bits:
             match = kwarg_re.match(bit)
             if not match:
@@ -98,6 +98,8 @@ class QURLNode(Node):
                 qp = [p for p in qp if not(p[0] == name)]
                 if value is not None:
                     qp.append((name, value,))
+            elif op == '--':
+                qp = [p for p in qp if not(p[0] == name)]
 
         urlp[4] = urlencode(qp, True)
         url = urlunparse(urlp)
