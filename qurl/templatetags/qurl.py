@@ -17,7 +17,7 @@ register = Library()
 
 
 @register.tag
-def qurl(parser, token, reverse=False):
+def qurl(parser, token):
     """
     Append, remove or replace query string parameters (preserve order)
 
@@ -60,27 +60,19 @@ def qurl(parser, token, reverse=False):
             name, op, value = match.groups()
             qs.append((name, op, parser.compile_filter(value),))
 
-    return QURLNode(url, qs, asvar, reverse)
-
-
-@register.tag
-def rqurl(parser, token):
-    return qurl(parser, token, True)
+    return QURLNode(url, qs, asvar)
 
 
 class QURLNode(Node):
     """Implements the actions of the qurl tag."""
 
-    def __init__(self, url, qs, asvar, reverse):
+    def __init__(self, url, qs, asvar):
         self.url = url
         self.qs = qs
         self.asvar = asvar
-        self.reverse = reverse
 
     def render(self, context):
         url = self.url.resolve(context)
-        if self.reverse:
-            url = reverse(url)
         urlp = list(urlparse(url))
         qp = parse_qsl(urlp[4])
         for name, op, value in self.qs:
