@@ -32,3 +32,11 @@ def test_qurl_as():
         "-{{ url1 }}-"
     )
     assert template.render(context) == '-http://example.com/-'
+
+
+def test_quotes_in_params():
+    out = Template(
+        "{% load qurl %}"
+        "{% qurl 'http://example.com/?a=1&b=2' b='vodka vodka' %}"
+    ).render(Context())
+    assert out == 'http://example.com/?a=1&b=vodka+vodka'
