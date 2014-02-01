@@ -1,7 +1,7 @@
 django-qurl
 -----------
 
-Append, remove or replace query string parameters from an url (preserve order).
+Append, remove or replace query string parameters from a url (preserve order).
 Originally created by Sophilabs - https://github.com/sophilabs/django-qurl-templatetag
 
 
@@ -15,23 +15,23 @@ Installation
 Usage
 =====
 
-Append, remove or replace query string parameters from an url (preserve order)
+Parameters:
+
+.. code-block::
+
+    name=value: replace all values of name by one value
+    name--: remove all values of name
+    name+=value: append a new value for name
+    name-=value: remove the value of name with the value
+
+Example:
 
 .. code-block::
 
     {% load qurl %}
 
-    {% qurl url [param]* [as <var_name>] %}
+    {% qurl '/search?page=1&color=blue&color=green' order='name' page-- color+='red' color-='green' %}
+    Output: /search?color=blue&order=name&color=red
 
-    Parameters:
-            name=value: replace all values of name by one value
-            name--: remove all values of name
-            name+=value: append a new value for name
-            name-=value: remove the value of name with the value
-
-    Example:
-
-        {% qurl '/search?page=1&color=blue&color=green' order='name' page=None color+='red' color-='green' %}
-        Output: /search?color=blue&order=name&color=red
-
-        {% qurl request.get_full_path order='name' %}
+    {% qurl request.get_full_path order='name' %}
+    Output: /your/current/path/?order=name
