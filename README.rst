@@ -30,8 +30,17 @@ Example:
 
     {% load qurl %}
 
-    {% qurl '/search?page=1&color=blue&color=green' order='name' page-- color+='red' color-='green' %}
+    {% qurl '/search?page=1&color=blue&color=green' order=name page-- color+=red color-=green %}
     Output: /search?color=blue&order=name&color=red
 
     {% qurl request.get_full_path order='name' %}
     Output: /your/current/path/?order=name
+
+Reverse support:
+
+.. code-block::
+
+    {% qurl 'url_name' [reverse_params] | order=name page-- color+=red color-=green %}
+    Output: /reversed/url/?color=blue&order=name&color=red
+
+The part before the vertical line behaves exactly as the standard url tag.
