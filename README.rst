@@ -49,7 +49,7 @@ Usage in views
 
 Example:
 
-.. code-block::
+.. code-block:: python
 
     from qurl import qurl
 
