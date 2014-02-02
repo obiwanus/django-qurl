@@ -47,7 +47,7 @@ tag.
 Usage in views
 ==============
 
-Example:
+Examples:
 
 .. code-block:: python
 
