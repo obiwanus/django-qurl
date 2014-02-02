@@ -62,6 +62,10 @@ Example:
     # Output: /testurl/1/?a=a2
 
     url = '/testurl/1/?a=a1&b=b1&b=b2'
+    qurl(url, add={'a': ['a2']}, remove=['b'])
+    # Output: /testurl/1/?a=a1&a=a2
+
+    url = '/testurl/1/?a=a1&b=b1&b=b2'
     qurl(url, exclude={'b': 'b2'}, add={'a': 'a2'})
     # Output: /testurl/1/?a=a1&a=a2&b=b1
 
