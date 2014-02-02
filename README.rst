@@ -90,3 +90,5 @@ Running tests
 
 Please make sure `tox <http://tox.testrun.org/>`_ is installed and run
 ``tox`` from the command line.
+
+The source code is hosted on Github: https://github.com/obiwanus/django-qurl/
