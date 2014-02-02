@@ -17,7 +17,7 @@ def qurl(url, add=None, exclude=None, remove=None):
 
     # Add parameters
     add = add if add else {}
-    for name, value in add.iteritems():
+    for name, value in add.items():
         if isinstance(value, (list, tuple)):
             # Append mode
             value = [smart_str(v) for v in value]
@@ -30,7 +30,7 @@ def qurl(url, add=None, exclude=None, remove=None):
 
     # Exclude parameters
     exclude = exclude if exclude else {}
-    for name, value in exclude.iteritems():
+    for name, value in exclude.items():
         if not isinstance(value, (list, tuple)):
             value = [value]
         value = [smart_str(v) for v in value]
