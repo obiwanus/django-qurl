@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, absolute_import
+
 import re
 import django
 from django.template.defaulttags import URLNode
@@ -5,13 +7,14 @@ from django.template.defaulttags import URLNode
 from django.utils.encoding import smart_str
 from django.template import Library, Node, TemplateSyntaxError
 from django.utils import six
-from django.core.urlresolvers import reverse
 
 if six.PY3:
     from urllib.parse import urlparse, parse_qsl, urlunparse, urlencode
 else:
     from urlparse import urlparse, parse_qsl, urlunparse
     from urllib import urlencode
+
+from qurl import qurl as qurl_process
 
 
 register = Library()
@@ -103,7 +106,6 @@ def qurl(parser, token):
 
 
 class QURLNode(Node):
-    """Implements the actions of the qurl tag."""
 
     def __init__(self, url, qs, asvar):
         self.url = url
@@ -115,28 +117,26 @@ class QURLNode(Node):
             url = self.url.render(context)
         else:
             url = self.url.resolve(context)
-        urlp = list(urlparse(url))
-        qp = parse_qsl(urlp[4])
-        for name, op, value in self.qs:
-            name = smart_str(name)
-            value = value.resolve(context)
-            value = smart_str(value) if value is not None else None
-            if op == '+=':
-                qp = [p for p in qp if not(p[0] == name and p[1] == value)]
-                qp.append((name, value,))
-            elif op == '-=':
-                qp = [p for p in qp if not(p[0] == name and p[1] == value)]
-            elif op == '=':
-                if django.VERSION[0] <= 1 and django.VERSION[1] <= 4:
-                    value = value or None
-                qp = [p for p in qp if not(p[0] == name)]
-                if value is not None:
-                    qp.append((name, value,))
-            elif op == '--':
-                qp = [p for p in qp if not(p[0] == name)]
 
-        urlp[4] = urlencode(qp, True)
-        url = urlunparse(urlp)
+        add, exclude, remove = {}, {}, []
+        for name, op, value in self.qs:
+            value = value.resolve(context)
+            if op == '+=':
+                if not add.get(name):
+                    add[name] = [value]
+                else:
+                    add[name].append(value)
+            elif op == '-=':
+                if not exclude.get(name):
+                    exclude[name] = [value]
+                else:
+                    exclude[name].append(value)
+            elif op == '=':
+                add[name] = value
+            elif op == '--':
+                remove.append(name)
+
+        url = qurl_process(url, add=add, exclude=exclude, remove=remove)
 
         if self.asvar:
             context[self.asvar] = url
