@@ -1,6 +1,3 @@
-django-qurl
------------
-
 Append, remove or replace query string parameters from a url (preserve order).
 Originally created by Sophilabs - https://github.com/sophilabs/django-qurl-templatetag
 
