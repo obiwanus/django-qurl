@@ -36,11 +36,12 @@ Example:
     {% qurl request.get_full_path order='name' %}
     Output: /your/current/path/?order=name
 
-Reverse support:
+Using reverse in the template tag:
 
 .. code-block::
 
-    {% qurl 'url_name' [reverse_params] | order=name page-- color+=red color-=green %}
-    Output: /reversed/url/?color=blue&order=name&color=red
+    {% qurl 'url_name' [reverse_params] | order=name color+=red color+=green %}
+    Output: /reversed/url/?order=name&color=red&color=green
 
-The part before the vertical line behaves exactly as the standard url tag.
+The reverse syntax is exactly the same as in the standard Django ``{% url %}``
+tag.
