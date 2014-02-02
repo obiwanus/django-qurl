@@ -83,3 +83,10 @@ If you want to add a value to already existing ones, use
 ``add={'param': ['value']}``. You can add more than one value of course.
 
 Please check the tests for more usage examples.
+
+
+Running tests
+-------------
+
+Please make sure `tox <http://tox.testrun.org/>`_ is installed and run
+``tox`` from the command line.
