@@ -5,7 +5,6 @@ else:
     from urlparse import urlparse, parse_qsl, urlunparse
     from urllib import urlencode
 
-import django
 from django.utils.encoding import smart_str
 
 
