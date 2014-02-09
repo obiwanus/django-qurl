@@ -13,7 +13,7 @@ setup(
     version=version,
     author='Ivan Ivanov',
     author_email='ivan@ivanovs.info',
-    packages=['qurl'],
+    packages=['qurl', 'qurl.templatetags'],
 
     license='MIT',
     url='https://github.com/obiwanus/django-qurl/',
